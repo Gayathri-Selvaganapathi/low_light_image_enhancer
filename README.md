@@ -34,12 +34,12 @@ from keras.models import Model
 np.random.seed(1)
 ```
 
-4. Dataset
+5. Dataset
 The dataset used is the LOL dataset for low-light image enhancement. The dataset consists of paired low-light (low) and normal light (high) images. You can download the dataset from the following link:
 
 https://drive.google.com/drive/folders/1UBsbY3CczeT03BOF3a7-FJoHHL4aCHWf?usp=sharing
 
-5. LOL Dataset
+6. LOL Dataset
 Place the dataset in your Google Drive and modify the InputPath to point to the correct dataset directory.
 
 ```bash
@@ -57,16 +57,18 @@ Salt-and-pepper noise is artificially added to the input images to simulate real
 def addNoise(image):
     # salt and pepper noise
     noiseAddedImage = np.copy(image)
-    
+
     # Adding salt (white) noise
     num_salt = np.ceil(image.size * 0.01)  # Percentage of image to be "salt"
     coords = [np.random.randint(0, i, int(num_salt)) for i in image.shape[:2]]
     noiseAddedImage[coords[0], coords[1], :] = 1  # Apply to all channels
-    
+
     # Adding pepper (black) noise
     num_pepper = np.ceil(image.size * 0.01)  # Percentage of image to be "pepper"
     coords = [np.random.randint(0, i, int(num_pepper)) for i in image.shape[:2]]
     noiseAddedImage[coords[0], coords[1], :] = 0  # Apply to all channels
+
+    return noiseAddedImage
 ```
 
 2. Data Preprocessing
@@ -74,7 +76,6 @@ The images are resized to 500x500 pixels and converted from BGR to RGB format. T
 
 ```bash
 def PreProcessData(ImagePath):
-    def PreProcessData(ImagePath):
     X_ = []
     y_ = []
     count = 0
@@ -120,46 +121,46 @@ A custom CNN architecture is designed, consisting of multiple layers of Conv2D w
 ```bash
 def InstantiateModel(in_):
     model_1 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(in_)
-        model_1 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(model_1)
-        model_1 = Conv2D(64,(2,2), activation='relu',padding='same',strides=1)(model_1)
-        
-        model_2 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(in_)
-        model_2 = Conv2D(64,(2,2), activation='relu',padding='same',strides=1)(model_2)
-        
-        model_2_0 = Conv2D(64,(2,2), activation='relu',padding='same',strides=1)(model_2)
-        
-        model_add = add([model_1,model_2,model_2_0])
-        
-        model_3 = Conv2D(64,(3,3), activation='relu',padding='same',strides=1)(model_add)
-        model_3 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(model_3)
-        model_3 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_3)
-        
-        model_3_1 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(model_add)
-        model_3_1 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_3_1)
-        
-        model_3_2 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_add)
-        
-        model_add_2 = add([model_3_1,model_3_2,model_3])
-        
-        model_4 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(model_add_2)
-        model_4_1 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(model_add)
+    model_1 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(model_1)
+    model_1 = Conv2D(64,(2,2), activation='relu',padding='same',strides=1)(model_1)
+    
+    model_2 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(in_)
+    model_2 = Conv2D(64,(2,2), activation='relu',padding='same',strides=1)(model_2)
+    
+    model_2_0 = Conv2D(64,(2,2), activation='relu',padding='same',strides=1)(model_2)
+    
+    model_add = add([model_1,model_2,model_2_0])
+    
+    model_3 = Conv2D(64,(3,3), activation='relu',padding='same',strides=1)(model_add)
+    model_3 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(model_3)
+    model_3 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_3)
+    
+    model_3_1 = Conv2D(32,(3,3), activation='relu',padding='same',strides=1)(model_add)
+    model_3_1 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_3_1)
+    
+    model_3_2 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_add)
+    
+    model_add_2 = add([model_3_1,model_3_2,model_3])
+    
+    model_4 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(model_add_2)
+    model_4_1 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(model_add)
 
-        model_add_3 = add([model_4_1,model_add_2,model_4])
-        
-        model_5 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(model_add_3)
-        model_5 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_add_3)
-        
-        model_5 = Conv2D(3,(3,3), activation='relu',padding='same',strides=1)(model_5)
-        
-        return model_5
+    model_add_3 = add([model_4_1,model_add_2,model_4])
+    
+    model_5 = Conv2D(16,(3,3), activation='relu',padding='same',strides=1)(model_add_3)
+    model_5 = Conv2D(16,(2,2), activation='relu',padding='same',strides=1)(model_add_3)
+    
+    model_5 = Conv2D(3,(3,3), activation='relu',padding='same',strides=1)(model_5)
+    
+    return model_5
         
 ```
 
 ## Model Summary
-    * Input: 500x500 RGB image.
-    * Output: Enhanced 500x500 RGB image.
-    * Optimizer: Adam
-    * Loss: Mean Squared Error (MSE)
+1. Input: 500x500 RGB image.
+2. Output: Enhanced 500x500 RGB image.
+3. Optimizer: Adam
+4. Loss: Mean Squared Error (MSE)
 
 ## Training
 The model is trained using noisy, darkened images as input and the corresponding high-light images as ground truth. The model is compiled using the Adam optimizer and trained over multiple epochs.
@@ -176,10 +177,10 @@ Prediction = Model_Enhancer.predict(image_for_test)
 ```
 
 ## Example Usage
-    1.Load a test image.
-    2.Apply noise and darkening to simulate a low-light condition.
-    3.Run the model to get the enhanced image.
-    4.Compare the low-light image, the original image, and the enhanced output.
+1.Load a test image.
+2.Apply noise and darkening to simulate a low-light condition.
+3.Run the model to get the enhanced image.
+4.Compare the low-light image, the original image, and the enhanced output.
 
 ```bash
 Copy code
@@ -195,10 +196,10 @@ Below are sample outputs from the model:
 3. Enhanced Image: The output of the model, which restores brightness and reduces noise.
 
 
-References
-LOL Dataset: https://daooshee.github.io/BMVC2018website/
-Keras Documentation: https://keras.io/
-OpenCV Documentation: https://docs.opencv.org/
+## References
+1. LOL Dataset: https://daooshee.github.io/BMVC2018website/
+2. Keras Documentation: https://keras.io/
+3. OpenCV Documentation: https://docs.opencv.org/
 
 
 
